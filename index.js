@@ -109,7 +109,7 @@ const port = process.env.PORT || 7860;
   const conn = makeWASocket({
           logger: P({ level: 'silent' }),
           printQRInTerminal: false,
-          browser: Browsers.macOS("Firefox"),
+          browser: Browsers.windows("Edge"),
           syncFullHistory: true,
           auth: state,
           version

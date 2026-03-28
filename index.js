@@ -75,7 +75,7 @@ async function downloadSession() {
   if (fs.existsSync(sessionsDir + 'creds.json')) return true;
   if (!config.SESSION_ID) return false;
   try {
-    const sessdata = config.SESSION_ID.replace('MEGALODON~MD~', '');
+    const sessdata = config.SESSION_ID.replace('DEV~DYBY~', '');
     const filer = File.fromURL(`https://mega.nz/file/${sessdata}`);
     await new Promise((resolve, reject) => {
       filer.download((err, data) => {

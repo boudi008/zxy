@@ -14,7 +14,8 @@ cmd({
   filename: __filename
 }, async (conn, mek, m, { from, pushname, reply }) => {
   try {
-    const totalCommands = commands.length;
+
+    const totalCommands = Array.isArray(commands) ? commands.length : 0;
     const uptime = runtime(process.uptime());
     const ramUsed = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
     const ramTotal = Math.round(os.totalmem() / 1024 / 1024);
@@ -30,28 +31,68 @@ cmd({
 ┆→ *ᴄᴏᴍᴍᴀɴᴅs* : ${totalCommands}
 ╰-------------------------`;
 
+    // 🔘 Bouton principal + ton bouton script
     const buttons = [
       {
-        name: "cta_reply",
-        buttonParamsJson: JSON.stringify({
-          display_text: "📂 ᴍᴇɴᴜ",
-          id: `${prefix}menu`
-        })
+        buttonId: `${prefix}menu`,
+        buttonText: { displayText: "📂 ᴍᴇɴᴜ" },
+        type: 1
       },
       {
-        name: "cta_reply",
-        buttonParamsJson: JSON.stringify({
-          display_text: "👑 ᴏᴡɴᴇʀ",
-          id: `${prefix}owner`
-        })
+        buttonId: `${prefix}owner`,
+        buttonText: { displayText: "👑 ᴏᴡɴᴇʀ" },
+        type: 1
+      },
+      {
+        buttonId: `.getbot`,
+        buttonText: { displayText: "𝐕𝐈𝐄𝐖 𝐒𝐂𝐑𝐈𝐏𝐓" },
+        type: 1
       }
     ];
 
+    // 🔥 Flow (list button moderne)
+    const flowActions = [
+      {
+        buttonId: 'action',
+        buttonText: { displayText: 'Tʜɪs ʙᴜᴛᴛᴏɴ ʟɪsᴛ' },
+        type: 4,
+        nativeFlowInfo: {
+          name: 'single_select',
+          paramsJson: JSON.stringify({
+            title: "𝐌𝐄𝐍𝐔",
+            sections: [
+              {
+                title: "ᴘʟᴇᴀsᴇ ᴄʜᴏsᴇ ᴏɴᴇ",
+                rows: [
+                  { title: "𝐀𝐋𝐋 𝐌𝐄𝐍𝐔", description: "𝐋𝐈𝐒𝐓 𝐌𝐄𝐍𝐔", id: ".allmenu" },
+                  { title: "𝐁𝐔𝐆 𝐌𝐄𝐍𝐔", description: "𝐁𝐔𝐆 𝐌𝐄𝐍𝐔", id: ".bugmenu" }
+                ]
+              }
+            ]
+          })
+        }
+      }
+    ];
+
+    // ➕ Fusion des boutons
+    buttons.push(...flowActions);
+
     await conn.sendMessage(from, {
       image: { url: config.MENU_IMAGE_URL },
-      caption,
-      footer: "© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇᴠ ᴅʏʙʏ",
-      interactiveButtons: buttons,
+      caption: caption,
+      footer: "> © 𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 𝙳𝙴𝚅 𝙳𝚈𝙱𝚈",
+      buttons: buttons,
+      headerType: 4,
+      mentions: [m.sender],
+      contextInfo: {
+        mentionedJid: [m.sender],
+        forwardingScore: 999,
+        isForwarded: true,
+        forwardedNewsletterMessageInfo: {
+          newsletterJid: "1@",
+          newsletterName: " UPDATE "
+        }
+      },
       viewOnce: true
     }, { quoted: mek });
 

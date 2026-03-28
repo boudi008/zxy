@@ -1,7 +1,6 @@
 const config = require('../config');
 const moment = require('moment-timezone');
 const { cmd, commands } = require('../command');
-const axios = require('axios');
 
 function toSmallCaps(str) {
   const smallCaps = {
@@ -15,7 +14,7 @@ function toSmallCaps(str) {
 
 cmd({
   pattern: "menu",
-  alias: ["❄️", "mega", "allmenu"],
+  alias: ["mega", "allmenu"],
   use: '.menu',
   desc: "Show all bot commands",
   category: "menu",
@@ -25,50 +24,50 @@ cmd({
 async (conn, mek, m, { from, reply }) => {
   try {
     const totalCommands = commands.length;
-    const date = moment().tz("America/Port-au-Prince").format("dddd, DD MMMM YYYY");
 
     const uptime = () => {
       let sec = process.uptime();
       let h = Math.floor(sec / 3600);
-      let m = Math.floor((sec % 3600) / 60);
+      let min = Math.floor((sec % 3600) / 60);
       let s = Math.floor(sec % 60);
-      return `${h}h ${m}m ${s}s`;
+      return `${h}h ${min}m ${s}s`;
     };
 
-    let menuText = `
-*╭══〘 𝐌𝐄𝐆𝐀𝐋𝐎𝐃𝐎𝐍-𝐌𝐃 〙*
-*┃❍* *ᴜsᴇʀ* : @${m.sender.split("@")[0]}
-*┃❍* *ʀᴜɴᴛɪᴍᴇ* : ${uptime()}
-*┃❍* *ᴍᴏᴅᴇ* : *${config.MODE}*
-*┃❍* *ᴘʀᴇғɪx* : [${config.PREFIX}]
-*┃❍* *ᴩʟᴜɢɪɴ* :  ${totalCommands}
-*┃❍* *ᴅᴇᴠ* : *ᴅʏʙʏ ᴛᴇᴄʜ*
-*┃❍* *ᴠᴇʀsɪᴏɴs* : *1.0.0*
-*╰════════════════⊷*
-
-💧 *_WELCOME TO MEGALODON MD_* 💧
-`;
     let category = {};
-    for (let cmd of commands) {
-      if (!cmd.category) continue;
-      if (!category[cmd.category]) category[cmd.category] = [];
-      category[cmd.category].push(cmd);
+    for (let c of commands) {
+      if (!c.category) continue;
+      if (!category[c.category]) category[c.category] = [];
+      category[c.category].push(c);
     }
+
+    let menuText = `╭----------------------------
+│♲ 𝙱𝙾𝚃 𝙽𝙰𝙼𝙴 : 𝙼𝙴𝙶𝙰𝙻𝙾𝙳𝙾𝙽 𝙼𝙳
+│♲ 𝚄𝚂𝙴𝚁 : @${m.sender.split("@")[0]}
+│♲ 𝙿𝚁𝙴𝙵𝙸𝚇 : 『 ${config.PREFIX} 』
+│♲ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : \`2.0.0\`
+│♲ 𝙼𝙾𝙳𝙴 : ${config.MODE}
+│♲ 𝚄𝙿𝚃𝙸𝙼𝙴 : ${uptime()}
+│♲ 𝙿𝙻𝚄𝙶𝙸𝙽𝚂 : ${totalCommands}
+│♲ 𝙳𝙴𝚅 : \`𝙳𝙴𝚅 𝙳𝚈𝙱𝚈 𝚃𝙴𝙲𝙷\`
+╰----------------------------\n`;
 
     const keys = Object.keys(category).sort();
     for (let k of keys) {
-      menuText += `\n\n┌ ❏ 〤 *${k.toUpperCase()} MENU* 〤`;
-      const cmds = category[k].filter(c => c.pattern).sort((a, b) => a.pattern.localeCompare(b.pattern));
-      cmds.forEach((cmd) => {
-        const usage = cmd.pattern.split('|')[0];
-        menuText += `\n├❃ \`${config.PREFIX}${toSmallCaps(usage)}\``;
+      menuText += `\n⃠${k.toUpperCase()} 𝙼𝙴𝙽𝚄 ⃠\n`;
+      menuText += `╭-------------------------\n`;
+      const cmds = category[k]
+        .filter(c => c.pattern)
+        .sort((a, b) => a.pattern.localeCompare(b.pattern));
+      cmds.forEach(c => {
+        const usage = c.pattern.split('|')[0];
+        menuText += `├➩ ${toSmallCaps(usage)}\n`;
       });
-      menuText += `\n┗━━━━━━━━━━━━━━❃`;
+      menuText += `╰-------------------------\n`;
     }
 
-    menuText += `\n`;
-    
-await conn.sendMessage(from, {
+    menuText += `\n> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇᴠ ᴅʏʙʏ`;
+
+    await conn.sendMessage(from, {
       image: { url: config.MENU_IMAGE_URL },
       caption: menuText,
       contextInfo: {
@@ -76,14 +75,13 @@ await conn.sendMessage(from, {
         forwardingScore: 999,
         isForwarded: true,
         forwardedNewsletterMessageInfo: {
-          newsletterJid: '120363401051937059@newsletter',
+          newsletterJid: '120363406273402002@newsletter',
           newsletterName: '𝐌𝐄𝐆𝐀𝐋𝐎𝐃𝐎𝐍-𝐌𝐃',
           serverMessageId: 143
         }
       }
     }, { quoted: mek });
 
-    
   } catch (e) {
     console.error(e);
     reply(`❌ Error: ${e.message}`);

@@ -1,7 +1,17 @@
 FROM node:lts-buster
-RUN git clone https://github.com/DybyTech/MEGALODON-MD/root/DybyTech 
-WORKDIR /root/DybyTech 
-RUN npm install && npm install -g pm2 || yarn install --network-concurrency 1
-COPY . .
-EXPOSE 9090
+
+# Clone bot from GitHub
+RUN git clone https://github.com/DybyTechX/MEGALODON-MD.git /root/megalodon-md
+
+# Set working directory
+WORKDIR /root/megalodon-md
+
+# Install dependencies
+RUN npm install && npm install -g pm2
+
+# Expose port
+EXPOSE 7860
+
+# Start the bot
 CMD ["npm", "start"]
+

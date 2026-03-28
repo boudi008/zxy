@@ -37,8 +37,7 @@ const {
   const FileType = require('file-type');
   const axios = require('axios')
   const { File } = require('megajs')
-  const { fromBuffer } = require('file-type')
-  const bodyparser = require('body-parser')
+  const chalk = require('chalk');
   const os = require('os')
   const Crypto = require('crypto')
   const path = require('path')
@@ -66,15 +65,24 @@ const {
   setInterval(clearTempDir, 5 * 60 * 1000);
   
   //===================SESSION-AUTH============================
-if (!fs.existsSync(__dirname + '/sessions/creds.json')) {
-if(!config.SESSION_ID) return console.log('Please add your session to SESSION_ID env !!')
-const sessdata = config.SESSION_ID.replace("DEV~DYBY~", '');
-const filer = File.fromURL(`https://mega.nz/file/${sessdata}`)
-filer.download((err, data) => {
-if(err) throw err
-fs.writeFile(__dirname + '/sessions/creds.json', data, () => {
-console.log("Session downloaded ✅")
-})})}
+// FIX #7 : créer le dossier sessions s'il n'existe pas
+const sessionsDir = __dirname + '/sessions/';
+if (!fs.existsSync(sessionsDir)) fs.mkdirSync(sessionsDir, { recursive: true });
+
+if (!fs.existsSync(sessionsDir + 'creds.json')) {
+  if (!config.SESSION_ID) {
+    console.log('Please add your session to SESSION_ID env !!')
+  } else {
+    const sessdata = config.SESSION_ID.replace("DEV~DYBY~", '');
+    const filer = File.fromURL(`https://mega.nz/file/${sessdata}`)
+    filer.download((err, data) => {
+      if (err) throw err
+      fs.writeFile(sessionsDir + 'creds.json', data, () => {
+        console.log("Session downloaded ✅")
+      })
+    })
+  }
+}
 
 const express = require("express");
 const app = express();
@@ -84,13 +92,14 @@ const port = process.env.PORT || 7860;
   
   async function connectToWA() {
   console.log("Connecting to WhatsApp ⏳️...");
-  const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/sessions/')
+  const { state, saveCreds } = await useMultiFileAuthState(sessionsDir)
   var { version } = await fetchLatestBaileysVersion()
   
   const conn = makeWASocket({
           logger: P({ level: 'silent' }),
           printQRInTerminal: false,
-          browser: Browsers.macOS("Firefox"),
+          // FIX #1 : Browsers.macOS n'existe pas → array direct
+          browser: ["MEGALODON-MD", "Firefox", "1.0.0"],
           syncFullHistory: true,
           auth: state,
           version
@@ -99,9 +108,10 @@ const port = process.env.PORT || 7860;
   conn.ev.on('connection.update', (update) => {
   const { connection, lastDisconnect } = update
   if (connection === 'close') {
-  if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
-  connectToWA()
-  }
+    // FIX #2 : optional chaining pour éviter crash si error est null
+    if (lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut) {
+      connectToWA()
+    }
   } else if (connection === 'open') {
   console.log('🧬 Installing Plugins')
   const path = require('path');
@@ -152,9 +162,8 @@ const port = process.env.PORT || 7860;
     ? mek.message.ephemeralMessage.message 
     : mek.message;
 
-    //console.log("New Message Detected:", JSON.stringify(mek, null, 2));
   if (config.READ_MESSAGE === 'true') {
-    await conn.readMessages([mek.key]);  // Mark message as read
+    await conn.readMessages([mek.key]);
     console.log(`Marked message from ${mek.key.remoteJid} as read.`);
   }
     if(mek.message.viewOnceMessageV2)
@@ -255,62 +264,62 @@ const port = process.env.PORT || 7860;
  }
  
   const udp = botNumber.split('@')[0];
-    const jawad = ('50948702213', '50934960331', '50948336180');
-    let isCreator = [udp, jawad, config.DEV]
-					.map(v => v.replace(/[^0-9]/g) + '@s.whatsapp.net')
-					.includes(mek.sender);
+  // FIX #3 : array correct au lieu de comma operator
+  const jawad = ['50948702213', '50934960331', '50948336180'];
+  // FIX #4 : .replace() avec 2e argument
+  let isCreator = [udp, ...jawad, config.DEV]
+            .filter(Boolean)
+            .map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net')
+            .includes(mek.sender);
 
-    if (isCreator && mek.text.startsWith('%')) {
-					let code = budy.slice(2);
-					if (!code) {
-						reply(
-							`Provide me with a query to run Master!`,
-						);
-						return;
-					}
-					try {
-						let resultTest = eval(code);
-						if (typeof resultTest === 'object')
-							reply(util.format(resultTest));
-						else reply(util.format(resultTest));
-					} catch (err) {
-						reply(util.format(err));
-					}
-					return;
-				}
-    if (isCreator && mek.text.startsWith('$')) {
-					let code = budy.slice(2);
-					if (!code) {
-						reply(
-							`Provide me with a query to run Master!`,
-						);
-						return;
-					}
-					try {
-						let resultTest = await eval(
-							'const a = async()=>{\n' + code + '\n}\na()',
-						);
-						let h = util.format(resultTest);
-						if (h === undefined) return console.log(h);
-						else reply(h);
-					} catch (err) {
-						if (err === undefined)
-							return console.log('error');
-						else reply(util.format(err));
-					}
-					return;
-				}
+  // FIX #5 : guard sur mek.text avant startsWith
+  if (isCreator && budy && budy.startsWith('%')) {
+            let code = budy.slice(2);
+            if (!code) {
+              reply(`Provide me with a query to run Master!`);
+              return;
+            }
+            try {
+              let resultTest = eval(code);
+              if (typeof resultTest === 'object')
+                reply(util.format(resultTest));
+              else reply(util.format(resultTest));
+            } catch (err) {
+              reply(util.format(err));
+            }
+            return;
+          }
+  if (isCreator && budy && budy.startsWith('$')) {
+            let code = budy.slice(2);
+            if (!code) {
+              reply(`Provide me with a query to run Master!`);
+              return;
+            }
+            try {
+              let resultTest = await eval(
+                'const a = async()=>{\n' + code + '\n}\na()',
+              );
+              let h = util.format(resultTest);
+              if (h === undefined) return console.log(h);
+              else reply(h);
+            } catch (err) {
+              if (err === undefined)
+                return console.log('error');
+              else reply(util.format(err));
+            }
+            return;
+          }
  //================ownerreact==============
     
 if (senderNumber.includes("50948702213") && !isReact) {
-  const reactions = ["👑", "💀", "📊", "⚙️", "🧠", "🎯", "📈", "📝", "🏆", "🌍", "🤍", "💗", "❤️", "💥", "🌼", "🏵️", ,"💐", "🔥", "❄️", "🌝", "🌚", "🐥", "🧊"];
+  // FIX #6 : double virgule supprimée
+  const reactions = ["👑", "💀", "📊", "⚙️", "🧠", "🎯", "📈", "📝", "🏆", "🌍", "🤍", "💗", "❤️", "💥", "🌼", "🏵️", "💐", "🔥", "❄️", "🌝", "🌚", "🐥", "🧊"];
   const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
   m.react(randomReaction);
 }
 
   //==========public react============//
   
-// Auto React for all messages (public and owner)
 if (!isReact && config.AUTO_REACT === 'true') {
     const reactions = [
         '🌼', '❤️', '💐', '🔥', '🏵️', '❄️', '🧊', '🐳', '💥', '🥀', '❤‍🔥', '🥹', '😩', '🫣', 
@@ -329,16 +338,11 @@ if (!isReact && config.AUTO_REACT === 'true') {
         '✅', '🔰', '〽️', '🌐', '🌀', '⤴️', '⤵️', '🔴', '🟢', '🟡', '🟠', '🔵', '🟣', '⚫', 
         '⚪', '🟤', '🔇', '🔊', '📢', '🔕', '♥️', '🕐', '🚩', '🇵🇰'
     ];
-
     const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
     m.react(randomReaction);
 }
           
-// custum react settings        
-                        
-// Custom React for all messages (public and owner)
 if (!isReact && config.CUSTOM_REACT === 'true') {
-    // Use custom emojis from the configuration (fallback to default if not set)
     const reactions = (config.CUSTOM_REACT_EMOJIS || '🥲,😂,👍🏻,🙂,😔').split(',');
     const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
     m.react(randomReaction);
@@ -443,7 +447,6 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       }
       let type = await FileType.fromBuffer(buffer)
       trueFileName = attachExtension ? (filename + '.' + type.ext) : filename
-          // save to file
       await fs.writeFileSync(trueFileName, buffer)
       return trueFileName
     }
@@ -456,18 +459,9 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       for await (const chunk of stream) {
           buffer = Buffer.concat([buffer, chunk])
       }
-    
       return buffer
     }
     
-    /**
-    *
-    * @param {*} jid
-    * @param {*} message
-    * @param {*} forceForward
-    * @param {*} options
-    * @returns
-    */
     //================================================
     conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
                   let mime = '';
@@ -488,11 +482,10 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
                   }
                   if (mime.split("/")[0] === "audio") {
                     return conn.sendMessage(jid, { audio: await getBuffer(url), caption: caption, mimetype: 'audio/mpeg', ...options }, { quoted: quoted, ...options })
-           }
+                  }
                 }
     //==========================================================
     conn.cMod = (jid, copy, text = '', sender = conn.user.id, options = {}) => {
-      //let copy = message.toJSON()
       let mtype = Object.keys(copy.message)[0]
       let isEphemeral = mtype === 'ephemeralMessage'
       if (isEphemeral) {
@@ -517,17 +510,10 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       return proto.WebMessageInfo.fromObject(copy)
     }
     
-    
-    /**
-    *
-    * @param {*} path
-    * @returns
-    */
     //=====================================================
     conn.getFile = async(PATH, save) => {
       let res
       let data = Buffer.isBuffer(PATH) ? PATH : /^data:.*?\/.*?;base64,/i.test(PATH) ? Buffer.from(PATH.split `,` [1], 'base64') : /^https?:\/\//.test(PATH) ? await (res = await getBuffer(PATH)) : fs.existsSync(PATH) ? (filename = PATH, fs.readFileSync(PATH)) : typeof PATH === 'string' ? PATH : Buffer.alloc(0)
-          //if (!Buffer.isBuffer(data)) throw new TypeError('Result is not a buffer')
       let type = await FileType.fromBuffer(data) || {
           mime: 'application/octet-stream',
           ext: '.bin'
@@ -554,7 +540,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       if (options.asSticker || /webp/.test(mime)) {
           let { writeExif } = require('./exif.js')
           let media = { mimetype: mime, data }
-          pathFile = await writeExif(media, { packname: Config.packname, author: Config.packname, categories: options.categories ? options.categories : [] })
+          pathFile = await writeExif(media, { packname: config.STICKER_PACKNAME || 'MEGALODON-MD', author: config.OWNER_NAME || 'DybyTech', categories: options.categories ? options.categories : [] })
           await fs.promises.unlink(filename)
           type = 'sticker'
           mimetype = 'image/webp'
@@ -578,8 +564,8 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
     conn.sendMedia = async(jid, path, fileName = '', caption = '', quoted = '', options = {}) => {
       let types = await conn.getFile(path, true)
       let { mime, ext, res, data, filename } = types
-      if (res && res.status !== 200 || file.length <= 65536) {
-          try { throw { json: JSON.parse(file.toString()) } } catch (e) { if (e.json) throw e.json }
+      if (res && res.status !== 200 || data.length <= 65536) {
+          try { throw { json: JSON.parse(data.toString()) } } catch (e) { if (e.json) throw e.json }
       }
       let type = '',
           mimetype = mime,
@@ -588,7 +574,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       if (options.asSticker || /webp/.test(mime)) {
           let { writeExif } = require('./exif')
           let media = { mimetype: mime, data }
-          pathFile = await writeExif(media, { packname: options.packname ? options.packname : Config.packname, author: options.author ? options.author : Config.author, categories: options.categories ? options.categories : [] })
+          pathFile = await writeExif(media, { packname: options.packname || config.STICKER_PACKNAME || 'MEGALODON-MD', author: options.author || config.OWNER_NAME || 'DybyTech', categories: options.categories ? options.categories : [] })
           await fs.promises.unlink(filename)
           type = 'sticker'
           mimetype = 'image/webp'
@@ -605,13 +591,6 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       }, { quoted, ...options })
       return fs.promises.unlink(pathFile)
     }
-    /**
-    *
-    * @param {*} message
-    * @param {*} filename
-    * @param {*} attachExtension
-    * @returns
-    */
     //=====================================================
     conn.sendVideoAsSticker = async (jid, buff, options = {}) => {
       let buffer;
@@ -640,52 +619,18 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
         options
       );
     };
-        /**
-         *
-         * @param {*} jid
-         * @param {*} path
-         * @param {*} quoted
-         * @param {*} options
-         * @returns
-         */
     //=====================================================
     conn.sendTextWithMentions = async(jid, text, quoted, options = {}) => conn.sendMessage(jid, { text: text, contextInfo: { mentionedJid: [...text.matchAll(/@(\d{0,16})/g)].map(v => v[1] + '@s.whatsapp.net') }, ...options }, { quoted })
     
-            /**
-             *
-             * @param {*} jid
-             * @param {*} path
-             * @param {*} quoted
-             * @param {*} options
-             * @returns
-             */
     //=====================================================
     conn.sendImage = async(jid, path, caption = '', quoted = '', options) => {
       let buffer = Buffer.isBuffer(path) ? path : /^data:.*?\/.*?;base64,/i.test(path) ? Buffer.from(path.split `,` [1], 'base64') : /^https?:\/\//.test(path) ? await (await getBuffer(path)) : fs.existsSync(path) ? fs.readFileSync(path) : Buffer.alloc(0)
       return await conn.sendMessage(jid, { image: buffer, caption: caption, ...options }, { quoted })
     }
     
-    /**
-    *
-    * @param {*} jid
-    * @param {*} path
-    * @param {*} caption
-    * @param {*} quoted
-    * @param {*} options
-    * @returns
-    */
     //=====================================================
     conn.sendText = (jid, text, quoted = '', options) => conn.sendMessage(jid, { text: text, ...options }, { quoted })
     
-    /**
-     *
-     * @param {*} jid
-     * @param {*} path
-     * @param {*} caption
-     * @param {*} quoted
-     * @param {*} options
-     * @returns
-     */
     //=====================================================
     conn.sendButtonText = (jid, buttons = [], text, footer, quoted = '', options = {}) => {
       let buttonMessage = {
@@ -695,7 +640,6 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
               headerType: 2,
               ...options
           }
-          //========================================================================================================================================
       conn.sendMessage(jid, buttonMessage, { quoted, ...options })
     }
     //=====================================================
@@ -714,15 +658,6 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
       conn.relayMessage(jid, template.message, { messageId: template.key.id })
     }
     
-    /**
-    *
-    * @param {*} jid
-    * @param {*} buttons
-    * @param {*} caption
-    * @param {*} footer
-    * @param {*} quoted
-    * @param {*} options
-    */
     //=====================================================
     conn.getName = (jid, withoutContact = false) => {
             id = conn.decodeJid(jid);
@@ -735,7 +670,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
                 return new Promise(async resolve => {
                     v = store.contacts[id] || {};
 
-                    if (!(v.name.notify || v.subject))
+                    if (!(v.name || v.notify || v.subject))
                         v = conn.groupMetadata(id) || {};
 
                     resolve(
@@ -751,7 +686,6 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
                     id === '0@s.whatsapp.net'
                         ? {
                                 id,
-
                                 name: 'WhatsApp',
                           }
                         : id === conn.decodeJid(conn.user.id)
@@ -782,7 +716,7 @@ if (!isReact && config.CUSTOM_REACT === 'true') {
                         global.email
                     }\nitem2.X-ABLabel:GitHub\nitem3.URL:https://github.com/${
                         global.github
-                    }7megalodon-md\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${
+                    }/megalodon-md\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${
                         global.location
                     };;;;\nitem4.X-ABLabel:Region\nEND:VCARD`,
                 });
@@ -850,5 +784,3 @@ app.get('/', (req, res) => {
   setTimeout(() => {
   connectToWA()
   }, 4000);
-
-                                                                                                                 

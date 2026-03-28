@@ -123,16 +123,15 @@ const port = process.env.PORT || 7860;
   console.log('Plugins installed successful ✅')
   console.log('Bot connected to whatsapp ✅')
   
-  let up = `╔═◈『𝐌𝐄𝐆𝐀𝐋𝐎𝐃𝐎𝐍-𝐌𝐃』◈═╗
-║🪀 ┃ *PRÉFIX:* ➥${config.PREFIX}
+  let up = `╭-------------------------
+║ *𝙿𝚁𝙴𝙵𝙸𝚇:* ➥${config.PREFIX}
 ║
-║♻️ ┃ *MODE:* *[${config.MODE}]*
+║ *𝙼𝙾𝙳𝙴:* *[${config.MODE}]*
 ║
-║📦 ┃ *BOT REPO:* 
+║ *𝙱𝙾𝚃 𝚁𝙴𝙿𝙾:* 
 ║     https://github.com/DybyTechX/MEGALODON-MD 
-║
-╚══════════════════╝
-> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅʏʙʏ ᴛᴇᴄʜ*`;
+╰-------------------------
+> © 𝙿𝙾𝚆𝙴𝚁𝙴𝙳 𝙱𝚈 𝙳𝙴𝚅 𝙳𝚈𝙱𝚈`;
     conn.sendMessage(conn.user.id, { image: { url: `https://files.catbox.moe/vmqovi.jpg` }, caption: up })
   }
   })
@@ -188,7 +187,7 @@ const port = process.env.PORT || 7860;
   }	  
   if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REACT === "true"){
     const jawadlike = await conn.decodeJid(conn.user.id);
-    const emojis = ['❤️', '🌹', '😇', '❄️', '💥', '💯', '🔥', '💫', '💎', '💗', '🤍', '🖤', '👀', '🙌', '🙆', '🫣', '🥰', '💐', '😎', '🤎', '✅', '🫀', '🧡', '😁', '😄', '🌸', '🕊️', '🌷', '⛅', '🌟', '✨', '💫', '💜', '💙', '🌝', '🖤', '💚'];
+    const emojis = ['❤️', '🌹', '😇', '❄️', '💥', '💯', '🔥', '💫', '💎', '💗', '🤍', '🖤', '👀', '🙌', '🙆', '🫣', '🥰', '💐', '😎', '🤎', '✅', '🫀', '🧡', '😁', '😄', '🌸', '🕊️', '🌷', '⛅', '🌟', '✨', '💫' '💜', '💙', '🌝', '🖤', '💚'];
     const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
     await conn.sendMessage(mek.key.remoteJid, {
       react: {
@@ -260,8 +259,20 @@ const port = process.env.PORT || 7860;
   }
   // ==============================
   const reply = (teks) => {
- conn.sendMessage(from, { text: teks }, { quoted: mek })
- }
+  conn.sendMessage(from, {
+    text: teks,
+    contextInfo: {
+      forwardingScore: 2,
+      isForwarded: true,
+      mentionedJid: [sender],
+      forwardedNewsletterMessageInfo: {
+        newsletterName: "𝐌𝐄𝐆𝐀𝐋𝐎𝐃𝐎𝐍-𝐌𝐃",
+        newsletterJid: "120363406273402002@newsletter",
+        serverMessageId: 143
+      }
+    }
+  }, { quoted: mek });
+};
  
   const udp = botNumber.split('@')[0];
   // FIX #3 : array correct au lieu de comma operator

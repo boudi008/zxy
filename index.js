@@ -78,7 +78,7 @@ if (!fs.existsSync(sessionsDir + 'creds.json')) {
     filer.download((err, data) => {
       if (err) throw err
       fs.writeFile(sessionsDir + 'creds.json', data, () => {
-        console.log("Session downloaded ✅")
+        chalk.red(chalk.bgGreen('[Session downloaded ✅️]'))
       })
     })
   }
@@ -120,8 +120,8 @@ const port = process.env.PORT || 7860;
   require("./plugins/" + plugin);
   }
   });
-  console.log('Plugins installed successful ✅')
-  console.log('Bot connected to whatsapp ✅')
+  chalk.yellow('[plugins installed successfully]')
+  chalk.grenn('[Bot connected to whatsapp ✅]')
   
   let up = `╭-------------------------
 ║ *𝙿𝚁𝙴𝙵𝙸𝚇:* ➥${config.PREFIX}
@@ -187,7 +187,7 @@ const port = process.env.PORT || 7860;
   }	  
   if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REACT === "true"){
     const jawadlike = await conn.decodeJid(conn.user.id);
-    const emojis = ['❤️', '🌹', '😇', '❄️', '💥', '💯', '🔥', '💫', '💎', '💗', '🤍', '🖤', '👀', '🙌', '🙆', '🫣', '🥰', '💐', '😎', '🤎', '✅', '🫀', '🧡', '😁', '😄', '🌸', '🕊️', '🌷', '⛅', '🌟', '✨', '💫' '💜', '💙', '🌝', '🖤', '💚'];
+    const emojis = ['❤️', '🌹', '😇', '❄️', '💥', '💯', '🔥', '💫', '💎', '💗', '🤍', '🖤', '👀', '🙌', '🙆', '🫣', '🥰', '💐', '😎', '🤎', '✅', '🫀', '🧡', '😁', '😄', '🌸', '🕊️', '🌷', '⛅', '🌟', '✨', '💫', '💜', '💙', '🌝', '🖤', '💚'];
     const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
     await conn.sendMessage(mek.key.remoteJid, {
       react: {

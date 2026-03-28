@@ -78,7 +78,7 @@ if (!fs.existsSync(sessionsDir + 'creds.json')) {
     filer.download((err, data) => {
       if (err) throw err
       fs.writeFile(sessionsDir + 'creds.json', data, () => {
-        chalk.red(chalk.bgGreen('[Session downloaded ✅️]'))
+       console.log(chalk.bgGreen.black(' SESSION DOWNLOADED ') + ' ✅️');
       })
     })
   }
@@ -120,8 +120,8 @@ const port = process.env.PORT || 7860;
   require("./plugins/" + plugin);
   }
   });
-  chalk.yellow('[plugins installed successfully]')
-  chalk.grenn('[Bot connected to whatsapp ✅]')
+  console.log(chalk.yellow(' PLUGINS INSTALLED ') + ' ✅');
+console.log(chalk.bgBlack.green(' BOT CONNECTED TO WHATSAPP ') + ' 🚀');
   
   let up = `╭-------------------------
 ║ *𝙿𝚁𝙴𝙵𝙸𝚇:* ➥${config.PREFIX}

@@ -3,7 +3,7 @@ services:
     name: megalodon-md
     env: node
     plan: free
-    repo: https://github.com/DybyTech/MEGALODON-MD.git
+    repo: https://github.com/DybyTechX/MEGALODON-MD.git
     branch: main
     buildCommand: npm install
     startCommand: node index.js

@@ -43,11 +43,9 @@ const {
   const Crypto = require('crypto')
   const path = require('path')
   const prefix = config.PREFIX
-  const https = require('https');
-  const chalk = require('chalk');
   
   const ownerNumber = ['50948702213']
-  //=============================================
+  
   const tempDir = path.join(os.tmpdir(), 'cache-temp')
   if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir)
@@ -68,28 +66,15 @@ const {
   setInterval(clearTempDir, 5 * 60 * 1000);
   
   //===================SESSION-AUTH============================
-const sessionsDir = __dirname + '/sessions/';
-if (!fs.existsSync(sessionsDir)) fs.mkdirSync(sessionsDir, { recursive: true });
-
-async function downloadSession() {
-  if (fs.existsSync(sessionsDir + 'creds.json')) return true;
-  if (!config.SESSION_ID) return false;
-  try {
-    const sessdata = config.SESSION_ID.replace('DEV~DYBY~', '');
-    const filer = File.fromURL(`https://mega.nz/file/${sessdata}`);
-    await new Promise((resolve, reject) => {
-      filer.download((err, data) => {
-        if (err) return reject(err);
-        fs.writeFile(sessionsDir + 'creds.json', data, (e) => e ? reject(e) : resolve());
-      });
-    });
-    console.log('SESSION DOWNLOADED ✅');
-    return true;
-  } catch (e) {
-    console.error('SESSION DOWNLOAD ERROR:', e.message);
-    return false;
-  }
-}
+if (!fs.existsSync(__dirname + '/sessions/creds.json')) {
+if(!config.SESSION_ID) return console.log('Please add your session to SESSION_ID env !!')
+const sessdata = config.SESSION_ID.replace("DEV~DYBY~", '');
+const filer = File.fromURL(`https://mega.nz/file/${sessdata}`)
+filer.download((err, data) => {
+if(err) throw err
+fs.writeFile(__dirname + '/sessions/creds.json', data, () => {
+console.log("Session downloaded ✅")
+})})}
 
 const express = require("express");
 const app = express();
@@ -98,214 +83,53 @@ const port = process.env.PORT || 7860;
   //=============================================
   
   async function connectToWA() {
-  const hasCreds = await downloadSession();
-  console.log("CONNECTING TO WHATSAPP ⏳️...");
-  const { state, saveCreds } = await useMultiFileAuthState(sessionsDir)
+  console.log("Connecting to WhatsApp ⏳️...");
+  const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/sessions/')
   var { version } = await fetchLatestBaileysVersion()
-
-  // Pairing code si pas de session
-  const usePairingCode = !hasCreds && !config.SESSION_ID;
-
+  
   const conn = makeWASocket({
           logger: P({ level: 'silent' }),
           printQRInTerminal: false,
-          browser: ["Ubuntu", "Chrome", "20.0.04"],
+          browser: Browsers.macOS("Firefox"),
           syncFullHistory: true,
           auth: state,
           version
           })
-
-  // =========== PAIRING CODE ===========
-  if (usePairingCode && !conn.authState.creds.registered) {
-    let phoneNumber = config.OWNER_NUMBER
-      ? config.OWNER_NUMBER.replace(/[^0-9]/g, '')
-      : null;
-
-    if (!phoneNumber) {
-      // Lire le numéro depuis le terminal si pas de OWNER_NUMBER
-      const readline = require('readline');
-      const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-      phoneNumber = await new Promise(resolve => {
-        rl.question('\n📱 Entre ton numéro WhatsApp (ex: 22900000000): ', answer => {
-          rl.close();
-          resolve(answer.replace(/[^0-9]/g, ''));
-        });
-      });
-    }
-
-    try {
-      await sleep(3000);
-      const code = await conn.requestPairingCode(phoneNumber);
-      const formattedCode = code.match(/.{1,4}/g).join('-');
-      console.log('\n╭──────────────────────────────────●●');
-      console.log('│  🔑 MEGALODON-MD — PAIRING CODE');
-      console.log('│');
-      console.log(`│  📌 Code: ${formattedCode}`);
-      console.log('│');
-      console.log('│  1. Ouvre WhatsApp sur ton téléphone');
-      console.log('│  2. Paramètres → Appareils liés');
-      console.log('│  3. Lier un appareil → Entre le code');
-      console.log('╰──────────────────────────────────●●\n');
-    } catch (e) {
-      console.error('PAIRING CODE ERROR:', e.message);
-    }
-  }
-  // =====================================
       
   conn.ev.on('connection.update', (update) => {
   const { connection, lastDisconnect } = update
   if (connection === 'close') {
-  if (lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut) {
+  if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
   connectToWA()
   }
   } else if (connection === 'open') {
   console.log('🧬 Installing Plugins')
-  console.log('PLUGINS INSTALLED SUCCESSFUL ✅')
-  console.log('BOT CONNECTED TO WHATSAPP ✅')
   const path = require('path');
   fs.readdirSync("./plugins/").forEach((plugin) => {
   if (path.extname(plugin).toLowerCase() == ".js") {
   require("./plugins/" + plugin);
   }
   });
+  console.log('Plugins installed successful ✅')
+  console.log('Bot connected to whatsapp ✅')
   
-  
-let up = `> *╭──────────────●●*
-> *➺ ᴍᴇɢᴀʟᴏᴅᴏɴ ᴍᴅ ᴄᴏɴɴᴇᴄᴛᴇᴅ sᴜᴄᴄᴇssғᴜʟʏ ᴛʏᴘᴇ*
-> *${prefix}ᴍᴇɴᴜ ᴛᴏ sᴇᴇ ᴛʜᴇ ғᴜʟʟ ᴄᴏᴍᴍᴀɴᴅ ʟɪsᴛ💫*
-> *ᴊᴏɪɴ ᴏᴜʀ ᴡʜᴀᴛsᴀᴘᴘ ᴄʜᴀɴɴᴇʟ ғᴏʀ ᴜᴘᴅᴀᴛᴇs ʙᴏᴛ*
-
-> *https://whatsapp.com/channel/0029VbAdcIXJP216dKW1253g*
-
-> ➳ ᴘʀᴇғɪx 『 ${prefix} 』
-> ➳ ᴍᴏᴅᴇ 〔〔${mode}〕〕
-> ╰──────────────●●
-> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅʏʙʏ ᴛᴇᴄʜ**`;
-    conn.sendMessage(conn.user.id, { image: { url: config.MENU_IMAGE_URL }, caption: up })
+  let up = `╔═◈『𝐌𝐄𝐆𝐀𝐋𝐎𝐃𝐎𝐍-𝐌𝐃』◈═╗
+║🪀 ┃ *PRÉFIX:* ➥${config.PREFIX}
+║
+║♻️ ┃ *MODE:* *[${config.MODE}]*
+║
+║📦 ┃ *BOT REPO:* 
+║     https://github.com/DybyTechX/MEGALODON-MD 
+║
+╚══════════════════╝
+> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅʏʙʏ ᴛᴇᴄʜ*`;
+    conn.sendMessage(conn.user.id, { image: { url: `https://files.catbox.moe/vmqovi.jpg` }, caption: up })
   }
   })
   conn.ev.on('creds.update', saveCreds)
 
- // ==================================
-  
-conn.ev.on('call', async (calls) => {
-  try {
-    if (config.ANTI_CALL !== 'true') return;
+  //==============================
 
-    for (const call of calls) {
-      if (call.status !== 'offer') continue; // Only respond on call offer
-
-      const id = call.id;
-      const from = call.from;
-
-      await conn.rejectCall(id, from);
-      await conn.sendMessage(from, {
-        text: config.REJECT_MSG || '*📞 ᴄαℓℓ ɴσт αℓℓσωє∂ ιɴ тнιѕ ɴᴜмвєʀ уσυ ∂σɴт нανє ᴘєʀмιѕѕισɴ 📵*'
-      });
-      console.log(`Call rejected and message sent to ${from}`);
-    }
-  } catch (err) {
-    console.error("Anti-call error:", err);
-  }
-});
-  // =============AUTO-STSTUS-SEND================= 
-  const sendNoPrefix = async (client, message) => {
-  try {
-    if (!message.quoted) {
-      return await client.sendMessage(message.chat, {
-        text: "*😁 ᴘʟᴇᴀsᴇ ʀᴇᴘʟʏ ᴛᴏ ᴀ sᴛᴀᴛᴜs!*"
-      }, { quoted: message });
-    }
-
-    const buffer = await message.quoted.download();
-    const mtype = message.quoted.mtype;
-    const options = { quoted: message };
-
-    let messageContent = {};
-    switch (mtype) {
-      case "imageMessage":
-        messageContent = {
-          image: buffer,
-          caption: message.quoted.text || '',
-          mimetype: message.quoted.mimetype || "image/jpeg"
-        };
-        break;
-      case "videoMessage":
-        messageContent = {
-          video: buffer,
-          caption: message.quoted.text || '',
-          mimetype: message.quoted.mimetype || "video/mp4"
-        };
-        break;
-      case "audioMessage":
-        messageContent = {
-          audio: buffer,
-          mimetype: "audio/mp4",
-          ptt: message.quoted.ptt || false
-        };
-        break;
-      default:
-        return await client.sendMessage(message.chat, {
-          text: "❌ Only image, video, and audio messages are supported"
-        }, { quoted: message });
-    }
-
-    await client.sendMessage(message.chat, messageContent, options);
-  } catch (error) {
-    console.error("No Prefix Send Error:", error);
-    await client.sendMessage(message.chat, {
-     // text: "❌ Error forwarding message:\n" + error.message
-    }, { quoted: message });
-  }
-};
-
-// === BINA PREFIX COMMAND (send/sendme/stsend) ===
-conn.ev.on('messages.upsert', async (msg) => {
-  try {
-    const m = msg.messages[0];
-    if (!m.message || m.key.fromMe || m.key.participant === conn.user.id) return;
-
-    const text = m.message?.conversation || m.message?.extendedTextMessage?.text;
-    const from = m.key.remoteJid;
-    if (!text) return;
-
-    const command = text.toLowerCase().trim();
-    const targetCommands = ["send", "sendme", "sand"];
-    if (!targetCommands.includes(command)) return;
-
-    const quoted = m.message?.extendedTextMessage?.contextInfo?.quotedMessage;
-    if (!quoted) {
-      await conn.sendMessage(from, { text: "> *😉 ᴘʟᴇᴀsᴇ ʀᴇᴘʟʏ ᴛᴏ ᴀ sᴛᴀᴛᴜs!*" }, { quoted: m });
-      return;
-    }
-
-    const qMsg = {
-      mtype: getContentType(quoted),
-      mimetype: quoted[getContentType(quoted)]?.mimetype,
-      text: quoted[getContentType(quoted)]?.caption || quoted[getContentType(quoted)]?.text || '',
-      ptt: quoted[getContentType(quoted)]?.ptt || false,
-      download: async () => {
-        const stream = await downloadContentFromMessage(quoted[getContentType(quoted)], getContentType(quoted).replace("Message", ""));
-        let buffer = Buffer.from([]);
-        for await (const chunk of stream) buffer = Buffer.concat([buffer, chunk]);
-        return buffer;
-      }
-    };
-
-    m.chat = from;
-    m.quoted = qMsg;
-
-    await sendNoPrefix(conn, m);
-  } catch (err) {
-    console.error("No Prefix Handler Error:", err);
-  }
-});    
-
-
-
-
-// =====================================
-	 
   conn.ev.on('messages.update', async updates => {
     for (const update of updates) {
       if (update.update.message === null) {
@@ -314,12 +138,13 @@ conn.ev.on('messages.upsert', async (msg) => {
       }
     }
   });
-//=========WELCOME & GOODBYE =======
-	
-conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));	  
-	  
+  //============================== 
 
- /// READ STATUS       
+  conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));	  
+	  
+  //=============readstatus=======
+        
+  /// READ STATUS       
   conn.ev.on('messages.upsert', async(mek) => {
     mek = mek.messages[0]
     if (!mek.message) return
@@ -428,8 +253,7 @@ conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));
   const reply = (teks) => {
  conn.sendMessage(from, { text: teks }, { quoted: mek })
  }
-  
-  
+ 
   const udp = botNumber.split('@')[0];
     const jawad = ('50948702213', '50934960331', '50948336180');
     let isCreator = [udp, jawad, config.DEV]
@@ -476,24 +300,18 @@ conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));
 					}
 					return;
 				}
-
-   //=========BAN SUDO=============
-	// --- Ban and Sudo Utility Code for index.js ---
- 
- //=============DEV REACT==============
+ //================ownerreact==============
     
-  if(senderNumber.includes("50948702213")){
-  if(isReact) return
-  m.react("💫")
-   }
-/*if (senderNumber.includes(config.DEV)) {
-  ireturn m.react("🫟");
+if (senderNumber.includes("50948702213") && !isReact) {
+  const reactions = ["👑", "💀", "📊", "⚙️", "🧠", "🎯", "📈", "📝", "🏆", "🌍", "🤍", "💗", "❤️", "💥", "🌼", "🏵️", ,"💐", "🔥", "❄️", "🌝", "🌚", "🐥", "🧊"];
+  const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
+  m.react(randomReaction);
 }
-	  
-*/	  
+
   //==========public react============//
-  // Auto React 
-  if (!isReact && config.AUTO_REACT === 'true') {
+  
+// Auto React for all messages (public and owner)
+if (!isReact && config.AUTO_REACT === 'true') {
     const reactions = [
         '🌼', '❤️', '💐', '🔥', '🏵️', '❄️', '🧊', '🐳', '💥', '🥀', '❤‍🔥', '🥹', '😩', '🫣', 
         '🤭', '👻', '👾', '🫶', '😻', '🙌', '🫂', '🫀', '👩‍🦰', '🧑‍🦰', '👩‍⚕️', '🧑‍⚕️', '🧕', 
@@ -509,7 +327,7 @@ conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));
         '📑', '📉', '📂', '🔖', '🧷', '📌', '📝', '🔏', '🔐', '🩷', '❤️', '🧡', '💛', '💚', 
         '🩵', '💙', '💜', '🖤', '🩶', '🤍', '🤎', '❤‍🔥', '❤‍🩹', '💗', '💖', '💘', '💝', '❌', 
         '✅', '🔰', '〽️', '🌐', '🌀', '⤴️', '⤵️', '🔴', '🟢', '🟡', '🟠', '🔵', '🟣', '⚫', 
-        '⚪', '🟤', '🔇', '🔊', '📢', '🔕', '♥️', '🕐', '🚩', '🇦🇫'
+        '⚪', '🟤', '🔇', '🔊', '📢', '🔕', '♥️', '🕐', '🚩', '🇵🇰'
     ];
 
     const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
@@ -518,41 +336,20 @@ conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));
           
 // custum react settings        
                         
-if (!isReact && senderNumber !== botNumber) {
-    if (config.CUSTOM_REACT === 'true') {
-        // Use custom emojis from the configuration
-        const reactions = (config.CUSTOM_REACT_EMOJIS || '🥲,😂,😐,🙂,😔').split(',');
-        const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
-        m.react(randomReaction);
-    }
+// Custom React for all messages (public and owner)
+if (!isReact && config.CUSTOM_REACT === 'true') {
+    // Use custom emojis from the configuration (fallback to default if not set)
+    const reactions = (config.CUSTOM_REACT_EMOJIS || '🥲,😂,👍🏻,🙂,😔').split(',');
+    const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
+    m.react(randomReaction);
 }
-
-if (!isReact && senderNumber === botNumber) {
-    if (config.HEART_REACT === 'true') {
-        // Use custom emojis from the configuration
-        const reactions = (config.CUSTOM_REACT_EMOJIS || '❤️,🧡,💛,💚,💚').split(',');
-        const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
-        m.react(randomReaction);
-    }
-} 
         
-    const bannedUsers = JSON.parse(fs.readFileSync('./lib/ban.json', 'utf-8'));
-const isBanned = bannedUsers.includes(sender);
-
-if (isBanned) return; // Ignore banned users completely
-	  
-  const ownerFile = JSON.parse(fs.readFileSync('./lib/sudo.json', 'utf-8'));  // خواندن فایل
-  const ownerNumberFormatted = `${config.OWNER_NUMBER}@s.whatsapp.net`;
-  // بررسی اینکه آیا فرستنده در owner.json موجود است
-  const isFileOwner = ownerFile.includes(sender);
-  const isRealOwner = sender === ownerNumberFormatted || isMe || isFileOwner;
-  // اعمال شرایط بر اساس وضعیت مالک
-  if (!isRealOwner && config.MODE === "private") return;
-  if (!isRealOwner && isGroup && config.MODE === "inbox") return;
-  if (!isRealOwner && !isGroup && config.MODE === "groups") return;
- 
-	  
-	  // take commands 
+  //==========WORKTYPE============ 
+  if(!isOwner && config.MODE === "private") return
+  if(!isOwner && isGroup && config.MODE === "inbox") return
+  if(!isOwner && !isGroup && config.MODE === "groups") return
+   
+  // take commands 
                  
   const events = require('./command')
   const cmdName = isCmd ? body.slice(1).trim().split(" ")[0].toLowerCase() : false;
@@ -645,9 +442,9 @@ if (isBanned) return; // Ignore banned users completely
           buffer = Buffer.concat([buffer, chunk])
       }
       let type = await FileType.fromBuffer(buffer)
-      let trueFileName = attachExtension ? (filename + '.' + type.ext) : filename
+      trueFileName = attachExtension ? (filename + '.' + type.ext) : filename
           // save to file
-      fs.writeFileSync(trueFileName, buffer)
+      await fs.writeFileSync(trueFileName, buffer)
       return trueFileName
     }
     //=================================================
@@ -691,7 +488,7 @@ if (isBanned) return; // Ignore banned users completely
                   }
                   if (mime.split("/")[0] === "audio") {
                     return conn.sendMessage(jid, { audio: await getBuffer(url), caption: caption, mimetype: 'audio/mpeg', ...options }, { quoted: quoted, ...options })
-                  }
+           }
                 }
     //==========================================================
     conn.cMod = (jid, copy, text = '', sender = conn.user.id, options = {}) => {
@@ -740,7 +537,7 @@ if (isBanned) return; // Ignore banned users completely
       return {
           res,
           filename,
-          size: Buffer.isBuffer(data) ? data.length : 0,
+          size: await getSizeMedia(data),
           ...type,
           data
       }
@@ -757,7 +554,7 @@ if (isBanned) return; // Ignore banned users completely
       if (options.asSticker || /webp/.test(mime)) {
           let { writeExif } = require('./exif.js')
           let media = { mimetype: mime, data }
-          pathFile = await writeExif(media, { packname: config.STICKER_NAME || 'MEGALODON-MD', author: config.OWNER_NAME || 'DybyTech', categories: options.categories ? options.categories : [] })
+          pathFile = await writeExif(media, { packname: Config.packname, author: Config.packname, categories: options.categories ? options.categories : [] })
           await fs.promises.unlink(filename)
           type = 'sticker'
           mimetype = 'image/webp'
@@ -781,8 +578,8 @@ if (isBanned) return; // Ignore banned users completely
     conn.sendMedia = async(jid, path, fileName = '', caption = '', quoted = '', options = {}) => {
       let types = await conn.getFile(path, true)
       let { mime, ext, res, data, filename } = types
-      if (res && res.status !== 200 || data.length <= 65536) {
-          try { throw { json: JSON.parse(data.toString()) } } catch (e) { if (e.json) throw e.json }
+      if (res && res.status !== 200 || file.length <= 65536) {
+          try { throw { json: JSON.parse(file.toString()) } } catch (e) { if (e.json) throw e.json }
       }
       let type = '',
           mimetype = mime,
@@ -791,7 +588,7 @@ if (isBanned) return; // Ignore banned users completely
       if (options.asSticker || /webp/.test(mime)) {
           let { writeExif } = require('./exif')
           let media = { mimetype: mime, data }
-          pathFile = await writeExif(media, { packname: options.packname ? options.packname : (config.STICKER_NAME || 'MEGALODON-MD'), author: options.author ? options.author : (config.OWNER_NAME || 'DybyTech'), categories: options.categories ? options.categories : [] })
+          pathFile = await writeExif(media, { packname: options.packname ? options.packname : Config.packname, author: options.author ? options.author : Config.author, categories: options.categories ? options.categories : [] })
           await fs.promises.unlink(filename)
           type = 'sticker'
           mimetype = 'image/webp'
@@ -817,16 +614,15 @@ if (isBanned) return; // Ignore banned users completely
     */
     //=====================================================
     conn.sendVideoAsSticker = async (jid, buff, options = {}) => {
-      let buffer = await videoToWebp(buff);
+      let buffer;
       if (options && (options.packname || options.author)) {
-        const sticker = new StickersTypes(buffer, 'raw');
-        sticker.metadata.packname = options.packname || config.STICKER_NAME || 'MEGALODON-MD';
-        sticker.metadata.author = options.author || config.OWNER_NAME || 'DybyTech';
-        buffer = await sticker.build();
+        buffer = await writeExifVid(buff, options);
+      } else {
+        buffer = await videoToWebp(buff);
       }
       await conn.sendMessage(
         jid,
-        { sticker: buffer, ...options },
+        { sticker: { url: buffer }, ...options },
         options
       );
     };
@@ -986,7 +782,7 @@ if (isBanned) return; // Ignore banned users completely
                         global.email
                     }\nitem2.X-ABLabel:GitHub\nitem3.URL:https://github.com/${
                         global.github
-                    }/xbot-md\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${
+                    }7megalodon-md\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${
                         global.location
                     };;;;\nitem4.X-ABLabel:Region\nEND:VCARD`,
                 });
@@ -1025,6 +821,7 @@ if (isBanned) return; // Ignore banned users completely
         };
     conn.serializeM = mek => sms(conn, mek, store);
   }
+  
 app.use(express.static(path.join(__dirname, 'lib')));
 
 app.get('/api/status', (req, res) => {
@@ -1053,3 +850,5 @@ app.get('/', (req, res) => {
   setTimeout(() => {
   connectToWA()
   }, 4000);
+
+                                                                                                                 

@@ -264,7 +264,7 @@ const port = process.env.PORT || 7860;
     contextInfo: {
       forwardingScore: 2,
       isForwarded: true,
-      mentionedJid: [sender],
+      mentionedJid: [m.sender],
       forwardedNewsletterMessageInfo: {
         newsletterName: "𝐌𝐄𝐆𝐀𝐋𝐎𝐃𝐎𝐍-𝐌𝐃",
         newsletterJid: "120363406273402002@newsletter",

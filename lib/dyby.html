@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEGALODON-MD — Status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050810;
+    --surface: #0b0f1e;
+    --border: #1a2040;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --green: #00ff88;
+    --red: #ff3b6b;
+    --text: #e2e8f8;
+    --muted: #4a5580;
+    --glow: 0 0 30px rgba(0,229,255,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glowing orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb1 { width: 400px; height: 400px; background: var(--accent); top: -100px; right: -100px; animation: drift 8s ease-in-out infinite alternate; }
+  .orb2 { width: 300px; height: 300px; background: var(--accent2); bottom: -100px; left: -50px; animation: drift 10s ease-in-out infinite alternate-reverse; }
+
+  @keyframes drift {
+    from { transform: translate(0, 0); }
+    to { transform: translate(30px, 20px); }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .logo-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 0 30px rgba(0,229,255,0.3), inset 0 0 20px rgba(0,229,255,0.05);
+    animation: spin-border 4s linear infinite;
+    position: relative;
+  }
+
+  .logo-ring::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    border-top-color: var(--accent2);
+    animation: spin-border 2s linear infinite reverse;
+  }
+
+  .logo-inner {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--accent);
+    letter-spacing: -1px;
+  }
+
+  @keyframes spin-border {
+    to { transform: rotate(360deg); }
+  }
+
+  .bot-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 6vw, 42px);
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 6px;
+  }
+
+  .tagline {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  /* Status badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-top: 16px;
+    border: 1px solid;
+    transition: all 0.3s;
+  }
+
+  .status-badge.online {
+    background: rgba(0,255,136,0.08);
+    border-color: rgba(0,255,136,0.3);
+    color: var(--green);
+  }
+
+  .status-badge.offline {
+    background: rgba(255,59,107,0.08);
+    border-color: rgba(255,59,107,0.3);
+    color: var(--red);
+  }
+
+  .pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  /* Cards grid */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+    animation: fadeUp 0.6s ease 0.2s both;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+    animation: fadeUp 0.6s ease 0.3s both;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.2s;
+  }
+
+  .card:hover {
+    border-color: rgba(0,229,255,0.3);
+    transform: translateY(-2px);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.3), transparent);
+  }
+
+  .card-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .card-value {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .card-value.accent { color: var(--accent); }
+  .card-value.green { color: var(--green); }
+  .card-value.purple { color: #a78bfa; }
+
+  .card-icon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 20px;
+    opacity: 0.3;
+  }
+
+  /* Uptime bar */
+  .uptime-card {
+    animation: fadeUp 0.6s ease 0.4s both;
+  }
+
+  .uptime-bar-wrap {
+    margin-top: 12px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .uptime-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 4px;
+    width: 0%;
+    transition: width 1s ease;
+  }
+
+  /* Info row */
+  .info-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    transition: border-color 0.3s;
+    animation: fadeUp 0.6s ease 0.5s both;
+  }
+
+  .info-row:hover { border-color: rgba(0,229,255,0.2); }
+
+  .info-key {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .info-val {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .info-val.mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 48px;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 2px;
+    animation: fadeUp 0.6s ease 0.6s both;
+  }
+
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .footer a:hover { opacity: 0.7; }
+
+  /* Loading skeleton */
+  .skeleton {
+    background: linear-gradient(90deg, var(--border) 25%, rgba(255,255,255,0.05) 50%, var(--border) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    height: 22px;
+    width: 80px;
+  }
+
+  @keyframes shimmer {
+    from { background-position: 200% 0; }
+    to { background-position: -200% 0; }
+  }
+
+  /* Last updated */
+  .last-updated {
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 16px;
+    letter-spacing: 1px;
+    animation: fadeUp 0.6s ease 0.6s both;
+  }
+
+  @media (max-width: 480px) {
+    .grid, .grid-3 { grid-template-columns: 1fr 1fr; }
+    .card-value { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-ring">
+      <span class="logo-inner">MD</span>
+    </div>
+    <div class="bot-name" id="botName">MEGALODON-MD</div>
+    <div class="tagline">WhatsApp Bot · DybyTech</div>
+    <div class="status-badge offline" id="statusBadge">
+      <span class="pulse"></span>
+      <span id="statusText">Connecting...</span>
+    </div>
+  </div>
+
+  <!-- Top grid -->
+  <div class="grid">
+    <div class="card">
+      <div class="card-label">Uptime</div>
+      <div class="card-value accent" id="uptime"><div class="skeleton"></div></div>
+      <span class="card-icon">⏱</span>
+    </div>
+    <div class="card">
+      <div class="card-label">Memory</div>
+      <div class="card-value green" id="memory"><div class="skeleton"></div></div>
+      <span class="card-icon">💾</span>
+    </div>
+  </div>
+
+  <!-- 3-col grid -->
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-label">Prefix</div>
+      <div class="card-value accent" id="prefix"><div class="skeleton"></div></div>
+      <span class="card-icon">⚡</span>
+    </div>
+    <div class="card">
+      <div class="card-label">Mode</div>
+      <div class="card-value purple" id="mode"><div class="skeleton"></div></div>
+      <span class="card-icon">🔒</span>
+    </div>
+    <div class="card">
+      <div class="card-label">Node</div>
+      <div class="card-value" id="node"><div class="skeleton"></div></div>
+      <span class="card-icon">⬡</span>
+    </div>
+  </div>
+
+  <!-- Uptime progress -->
+  <div class="card uptime-card">
+    <div class="card-label">Session Duration</div>
+    <div class="uptime-bar-wrap">
+      <div class="uptime-bar-fill" id="uptimeBar"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px;">
+      <span style="font-size:10px;color:var(--muted)">START</span>
+      <span style="font-size:11px;color:var(--accent)" id="uptimeFull">—</span>
+      <span style="font-size:10px;color:var(--muted)">NOW</span>
+    </div>
+  </div>
+
+  <!-- Info rows -->
+  <div style="margin-top:12px">
+    <div class="info-row">
+      <span class="info-key">Bot Name</span>
+      <span class="info-val" id="infoName">—</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">Owner</span>
+      <span class="info-val" id="infoOwner">—</span>
+    </div>
+    <div class="info-row">
+      <span class="info-key">Last Refresh</span>
+      <span class="info-val mono" id="infoTime">—</span>
+    </div>
+  </div>
+
+  <div class="last-updated" id="lastUpdated">Auto-refresh every 30s</div>
+
+  <!-- Footer -->
+  <div class="footer">
+    © ᴘᴏᴡᴇʀᴇᴅ ʙʏ <a href="https://youtube.com/@DybyTechInc" target="_blank">ᴅᴇᴠ ᴅʏʙʏ</a>
+    &nbsp;·&nbsp;
+    <a href="https://t.me/dev_dyby" target="_blank">Telegram</a>
+    &nbsp;·&nbsp;
+    <a href="https://instagram.com/dyby_tech" target="_blank">Instagram</a>
+  </div>
+
+</div>
+
+<script>
+async function fetchStatus() {
+  try {
+    const res = await fetch('/api/status');
+    if (!res.ok) throw new Error('offline');
+    const d = await res.json();
+
+    // Header
+    document.getElementById('botName').textContent = d.bot_name;
+    document.title = d.bot_name + ' — Status';
+
+    // Badge
+    const badge = document.getElementById('statusBadge');
+    badge.className = 'status-badge ' + d.status;
+    document.getElementById('statusText').textContent = d.status.toUpperCase();
+
+    // Cards
+    document.getElementById('uptime').textContent = d.uptime;
+    document.getElementById('memory').textContent = d.memory_mb + ' MB';
+    document.getElementById('prefix').textContent = d.prefix;
+    document.getElementById('mode').textContent = d.mode.toUpperCase();
+    document.getElementById('node').textContent = d.node_version;
+
+    // Uptime bar — max 24h = 86400s
+    const pct = Math.min((d.uptime_seconds / 86400) * 100, 100);
+    document.getElementById('uptimeBar').style.width = pct + '%';
+    document.getElementById('uptimeFull').textContent = d.uptime;
+
+    // Info rows
+    document.getElementById('infoName').textContent = d.bot_name;
+    document.getElementById('infoOwner').textContent = d.owner;
+    document.getElementById('infoTime').textContent = new Date(d.timestamp).toLocaleTimeString();
+
+    document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+
+  } catch (e) {
+    document.getElementById('statusBadge').className = 'status-badge offline';
+    document.getElementById('statusText').textContent = 'OFFLINE';
+  }
+}
+
+fetchStatus();
+setInterval(fetchStatus, 30000);
+</script>
+</body>
+</html>

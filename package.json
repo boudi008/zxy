@@ -9,7 +9,7 @@
     "restart": "pm2 restart MEGALODON-MD"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "^7.0.0-rc.6",
+    "@whiskeysockets/baileys": "latest",
     "@adiwajshing/keyed-db": "^0.2.4",
     "@dark-yasiya/yt-dl.js": "1.0.5",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
@@ -32,7 +32,8 @@
     "form-data": "^4.0.0",
     "google-tts-api": "^2.0.2",
     "path": "^0.12.7",
-    "node-fetch": "^2.6.1",
+    "chalk": "4.1.2",
+    "node-fetch": "2.6.9"
     "btch-downloader": "^2.2.9",
     "megajs": "^1.1.0",
     "pdfkit": "^0.14.0",
@@ -52,5 +53,6 @@
     "@mrnima/tiktok-downloader":"1.0.0",
     "@mrnima/facebook-downloader":"1.0.0",
     "mrnima-moviedl":"1.0.0"
+
   }
 }

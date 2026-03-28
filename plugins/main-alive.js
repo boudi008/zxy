@@ -1,68 +1,62 @@
-
-const { cmd } = require('../command');
+const config = require("../config");
+const prefix = config.PREFIX;
 const os = require("os");
-const fs = require("fs");
-const moment = require("moment-timezone");
-const { runtime } = require('../lib/functions');
-const config = require('../config');
+const { cmd, commands } = require("../command");
+const { runtime } = require("../lib/functions");
 
 cmd({
-    pattern: "alive",
-    alias: ["mega", "live"],
-    desc: "Check bot is alive or not",
-    category: "main",
-    react: ["🤍", "🌟", "🗿", "🥋", "💫", "☠", "🤍"][Math.floor(Math.random() * 7)],
-    filename: __filename
-},
-async (conn, mek, m, { from, sender, reply }) => {
-    try {
-        const time = moment().tz("America/Port-au-Prince").format("HH:mm:ss");
-        const date = moment().tz("America/Port-au-Prince").format("DD/MM/YYYY");
+  pattern: "alive",
+  alias: ["test"],
+  desc: "Show styled alive menu",
+  category: "main",
+  use: ".alive",
+  react: "👋",
+  filename: __filename
+}, async (conn, mek, m, { from, pushname, reply }) => {
+  try {
+    const totalCommands = commands.length;
+    const uptime = runtime(process.uptime());
+    const ramUsed = (process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2);
+    const ramTotal = Math.round(os.totalmem() / 1024 / 1024);
 
-        const imagePath = './DybyTech/alive.jpg';
-        if (!fs.existsSync(imagePath)) return reply("❌ Image 'alive.jpg' introuvable dans /DybyTech.");
-        const imageBuffer = fs.readFileSync(imagePath);
+    const caption = `╭-------------------------
+┆→ *ᴄʀᴇᴀᴛᴏʀ* : *ᴅʏʙʏ ᴛᴇᴄʜ*
+┆→ *ᴍᴏᴅᴇ* : *${config.MODE}*
+┆→ *ᴘʀᴇғɪx* : *${prefix}*
+┆→ *ᴏᴡɴᴇʀ ɴᴀᴍᴇ* : ${config.OWNER_NAME}
+┆→ *ᴠᴇʀsɪᴏɴ* : *2.0.0*
+┆→ *ᴜᴘᴛɪᴍᴇ* : ${uptime}
+┆→ *ʀᴀᴍ* : ${ramUsed} MB / ${ramTotal} MB
+┆→ *ᴄᴏᴍᴍᴀɴᴅs* : ${totalCommands}
+╰-------------------------`;
 
-        const caption = 
-`╭──────〔 *ALIVE STATUS* 〕─◉
-│ *Online & Running!*
-│👤 *Dev: ᴅʏʙʏ ᴛᴇᴄʜ*
-│📦 *Version:* 1.0.0
-│📍 *Prefix:* [${config.PREFIX}]
-│📡 *Mode:* [${config.MODE}]
-│🖥️ *Host:* ${os.hostname()}
-│🕐 *Uptime:* ${runtime(process.uptime())}
-│📅 *Date:* ${date}
-│⏰ *Time:* ${time}
-╰────────────────────◉
-> *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅʏʙʏ ᴛᴇᴄʜ*`;
+    const buttons = [
+      {
+        name: "cta_reply",
+        buttonParamsJson: JSON.stringify({
+          display_text: "📂 ᴍᴇɴᴜ",
+          id: `${prefix}menu`
+        })
+      },
+      {
+        name: "cta_reply",
+        buttonParamsJson: JSON.stringify({
+          display_text: "👑 ᴏᴡɴᴇʀ",
+          id: `${prefix}owner`
+        })
+      }
+    ];
 
-        await conn.sendMessage(from, {
-            image: imageBuffer,
-            caption,
-            contextInfo: {
-                mentionedJid: [m.sender],
-                forwardingScore: 999,
-                isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363401051937059@newsletter',
-                    newsletterName: '𝐌𝐄𝐆𝐀𝐋𝐎𝐃𝐎𝐍-𝐌𝐃',
-                    serverMessageId: 143
-                },
-                externalAdReply: {
-                    showAdAttribution: true,
-                    title: "𝐌𝐄𝐆𝐀𝐋𝐎𝐃𝐎𝐍-𝐌𝐃",
-                    body: "ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅʏʙʏ ᴛᴇᴄʜ",
-                    mediaType: 1,
-                    previewType: "PHOTO",
-                    thumbnailUrl: null, // Important: Ne pas utiliser `thumbnail` avec image directe
-                    sourceUrl: "https://wa.me/" + config.OWNER_NUMBER
-                }
-            }
-        }, { quoted: mek });
+    await conn.sendMessage(from, {
+      image: { url: config.MENU_IMAGE_URL },
+      caption,
+      footer: "© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇᴠ ᴅʏʙʏ",
+      interactiveButtons: buttons,
+      viewOnce: true
+    }, { quoted: mek });
 
-    } catch (e) {
-        console.error("❌ Alive Error:", e);
-        reply(`❌ Une erreur est survenue : ${e.message}`);
-    }
+  } catch (err) {
+    console.error(err);
+    reply("❌ An error occurred while processing your request.");
+  }
 });

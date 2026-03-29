@@ -28,13 +28,13 @@
 
 <div align="center">
 
-> ⚡ **Don't forget to** `FORK 🍴` **and** `STAR 🌟` **the repo before deploying!**
+> ⚡ **ᴅᴏɴ'ᴛ ғᴏʀɢᴇᴛ ᴛᴏ** `FORK 🍴` **ᴀɴᴅ** `STAR 🌟` **ᴛʜᴇ ʀᴇᴘᴏ ʙᴇғᴏʀᴇ ᴅᴇᴘʟᴏʏɪɴɢ!**
 
 </div>
 
 ---
 
-## `▸` STEP 01 — FORK THE REPO
+## `▸` 𝗦𝗧𝗘𝗣 01 — 𝗙𝗢𝗥𝗞 𝗧𝗛𝗘 𝗥𝗘𝗣𝗢
 
 <div align="center">
 
@@ -48,20 +48,20 @@ Fork it. Star it. Then deploy it. Simple.
 
 ---
 
-## `▸` STEP 02 — GET YOUR SESSION ID
+## `▸` 𝗦𝗧𝗘𝗣 02 — 𝗚𝗘𝗧 𝗬𝗢𝗨𝗥 𝗦𝗘𝗦𝗦𝗜𝗢𝗡 𝗜𝗗
 
-> You need a **SESSION_ID** to authenticate your WhatsApp session.  
-> Enter your number with country code — example: `1855xxxxxxxx`
+> ʏᴏᴜ ɴᴇᴇᴅ a **𝗦𝗘𝗦𝗦𝗜𝗢𝗡_𝗜𝗗** ᴛᴏ ᴀᴜᴛʜᴇɴᴛɪᴄᴀᴛᴇ your ᴡʜᴀᴛsᴀᴘᴘ sᴇssɪᴏɴ.  
+> ᴇɴᴛᴇʀ ʏᴏᴜʀ ɴᴜᴍʙᴇʀ ᴡɪᴛʜ ᴄᴏᴜɴᴛʀʏ ᴄᴏᴅᴇ — ᴇxᴀᴍᴘʟᴇ: `1855xxxxxxxx`
 
 <div align="center">
 
-**① PAIR CODE — SESSION 1**
+**① 𝐏𝐀𝐈𝐑 𝐂𝐎𝐃𝐄 — 𝐒𝐄𝐒𝐒𝐈𝐎𝐍 1**
 
-[![Get Pairing Code](https://img.shields.io/badge/⟐%20GET%20SESSION%20ID-PAIR%20CODE%20%231-FF6B00?style=for-the-badge&logo=opencv&logoColor=white)](https://meg-lodon-session.onrender.com/)
+[![ɢᴇᴛ ᴘᴀɪʀɪɴɢ ᴄᴏᴅᴇ](https://img.shields.io/badge/⟐%20GET%20SESSION%20ID-PAIR%20CODE%20%231-FF6B00?style=for-the-badge&logo=opencv&logoColor=white)](https://megalodon-session-id-production.up.railway.app/)
 
-**② PAIR CODE — SESSION 2**
+**② 𝐏𝐀𝐈𝐑 𝐂𝐎𝐃𝐄 — 𝐒𝐄𝐒𝐒𝐈𝐎𝐍 2**
 
-[![Get Pairing Code](https://img.shields.io/badge/⟐%20GET%20SESSION%20ID-PAIR%20CODE%20%232-FF006E?style=for-the-badge&logo=opencv&logoColor=white)](https://MEGALODON-MD-session.onrender.com/)
+[![ɢᴇᴛ ᴘᴀɪʀɪɴɢ ᴄᴏᴅᴇ](https://img.shields.io/badge/⟐%20GET%20SESSION%20ID-PAIR%20CODE%20%232-FF006E?style=for-the-badge&logo=opencv&logoColor=white)](https://megalodon-session-bno0.onrender.com/)
 
 </div>
 
@@ -71,31 +71,31 @@ Fork it. Star it. Then deploy it. Simple.
 
 <div align="center">
 
-| Platform | Button | Status |
+| ᴘʟᴀᴛғᴏʀᴍ | ʙᴜᴛᴛᴏɴ | sᴛᴀᴛᴜs |
 |:--------:|:------:|:------:|
-| **Heroku** | [![Deploy](https://img.shields.io/badge/▲%20HEROKU-Deploy-430098?style=for-the-badge&logo=heroku&logoColor=white)](https://dashboard.heroku.com/new?template=https://github.com/DybyTechX/MEGALODON-MD) | ✅ Supported |
-| **Koyeb** | [![Deploy](https://img.shields.io/badge/◈%20KOYEB-Deploy-FF009D?style=for-the-badge&logo=koyeb&logoColor=white)](https://app.koyeb.com/services/deploy?type=git&repository=DybyTechX/MEGALODON-MD&ports=3000&env[PREFIX]=.&env[SESSION_ID]=&env[ALWAYS_ONLINE]=false&env[MODE]=public) | ✅ Supported |
-| **Railway** | [![Deploy](https://img.shields.io/badge/◉%20RAILWAY-Deploy-FF8700?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app/new) | ✅ Supported |
-| **Render** | [![Deploy](https://img.shields.io/badge/◐%20RENDER-Deploy-46E3B7?style=for-the-badge&logo=render&logoColor=black)](https://dashboard.render.com/web/new) | ✅ Supported |
-| **TalkDrove** | [![Deploy](https://img.shields.io/badge/◆%20TALKDROVE-Free%20Deploy-6971FF?style=for-the-badge&logo=github&logoColor=white)](https://talkdrove.com/share-bot/) | ✅ Free |
-| **Replit** | [![Deploy](https://img.shields.io/badge/◇%20REPLIT-Deploy-1976D2?style=for-the-badge&logo=replit&logoColor=white)](https://replit.com/~) | ✅ Supported |
-| **Hugging Face** | [![Deploy](https://img.shields.io/badge/◑%20HUGGING%20FACE-Free%20Deploy-CC00FF?style=for-the-badge&logo=huggingface&logoColor=white)](https://huggingface.co/spaces/DybyTechX/MEGALODON-MD) | ✅ Free 16GB |
+| **ʜᴇʀᴏᴋᴜ** | [![Deploy](https://img.shields.io/badge/▲%20HEROKU-Deploy-430098?style=for-the-badge&logo=heroku&logoColor=white)](https://dashboard.heroku.com/new?template=https://github.com/DybyTechX/MEGALODON-MD) | ✅ sᴜᴘᴘᴏʀᴛᴇᴅ |
+| **ᴋᴏʏᴇʙ** | [![Deploy](https://img.shields.io/badge/◈%20KOYEB-Deploy-FF009D?style=for-the-badge&logo=koyeb&logoColor=white)](https://app.koyeb.com/services/deploy?type=git&repository=DybyTechX/MEGALODON-MD&ports=3000&env[PREFIX]=.&env[SESSION_ID]=&env[ALWAYS_ONLINE]=false&env[MODE]=public) | ✅ Supported |
+| **ʀᴀɪʟᴡᴀʏ** | [![Deploy](https://img.shields.io/badge/◉%20RAILWAY-Deploy-FF8700?style=for-the-badge&logo=railway&logoColor=white)](https://railway.app/new) | ✅ sᴜᴘᴘᴏʀᴛᴇᴅ |
+| **ʀᴇɴᴅᴇʀ** | [![Deploy](https://img.shields.io/badge/◐%20RENDER-Deploy-46E3B7?style=for-the-badge&logo=render&logoColor=black)](https://dashboard.render.com/web/new) | ✅ sᴜᴘᴘᴏʀᴛᴇᴅ |
+| **ᴛᴀʟᴋᴅʀᴏᴠᴇ** | [![Deploy](https://img.shields.io/badge/◆%20TALKDROVE-Free%20Deploy-6971FF?style=for-the-badge&logo=github&logoColor=white)](https://talkdrove.com/share-bot/) | ✅ ғʀᴇᴇ |
+| **ʀᴇᴘʟɪᴛ** | [![Deploy](https://img.shields.io/badge/◇%20REPLIT-Deploy-1976D2?style=for-the-badge&logo=replit&logoColor=white)](https://replit.com/~) | ✅ sᴜᴘᴘᴏʀᴛᴇᴅ |
+| **ʜᴜɢɢɪɴɢ ғᴀᴄᴇ** | [![Deploy](https://img.shields.io/badge/◑%20HUGGING%20FACE-Free%20Deploy-CC00FF?style=for-the-badge&logo=huggingface&logoColor=white)](https://huggingface.co/spaces/DybyTechX/MEGALODON-MD) | ✅ Free 16GB |
 
 </div>
 
 <br/>
 
 <details>
-<summary><b>📖 How to Deploy on Hugging Face (Free — 16GB RAM)</b></summary>
+<summary><b>📖 ʜᴏᴡ ᴛᴏ ᴅᴇᴘʟᴏʏ ᴏɴ ʜᴜɢɢɪɴɢ ғᴀᴄᴇ (ғʀᴇᴇ — 16GB ʀᴀᴍ)</b></summary>
 
 <br/>
 
-**Specs:**
-- 🖥️ v2 CPU
-- 💾 16GB RAM
-- ⚡ Free 24/7
+**sᴘᴇᴄs:**
+- 🖥️ v2 ᴄᴘᴜ
+- 💾 16ɢʙ ʀᴀᴍ
+- ⚡ ғʀᴇᴇ 24/7
 
-**Steps:**
+**sᴛᴇᴘs:**
 
 ```
 Step 1 → Go to huggingface.co/join — create & verify your account
@@ -105,15 +105,15 @@ Step 4 → Fill in: Session ID, Bot Name, Owner Number, etc.
 Step 5 → Click "Duplicate Space" → Wait ~10 seconds → Done ✅
 ```
 
-Your bot is now running **free 24/7** on Hugging Face.
+ʏᴏᴜʀ ʙᴏᴛ ɪs ɴᴏᴡ ʀᴜɴɴɪɴɢ **ғʀᴇᴇ 24/7** ᴏɴ ʜᴜɢɢɪɴɢ ғᴀᴄᴇ.
 
 </details>
 
 ---
 
-## `▸` STEP 04 — GITHUB ACTIONS (CI/CD)
+## `▸` 𝐒𝐓𝐄𝐏 04 — 𝐆𝐈𝐓𝐇𝐔𝐁 𝐀𝐂𝐓𝐈𝐎𝐍𝐒 (𝐂𝐈/𝐂𝐃)
 
-Create `.github/workflows/deploy.yml` in your fork:
+ᴄʀᴇᴀᴛᴇ `.github/workflows/deploy.yml` ɪɴ ʏᴏᴜʀ ғᴏʀᴋ:
 
 ```yaml
 name: MEGALODON-MD CI
@@ -154,7 +154,7 @@ jobs:
 
 ---
 
-## `▸` CONNECT
+## `▸` 𝐂𝐎𝐍𝐍𝐄𝐂𝐓
 
 <div align="center">
 
@@ -168,43 +168,43 @@ jobs:
 
 ---
 
-## `▸` CREDITS
+## `▸` 𝐂𝐑𝐄𝐃𝐈𝐓𝐒
 
 <div align="center">
 
-Special thanks to:
+sᴘᴇᴄɪᴀʟ ᴛʜᴀɴᴋs ᴛᴏ:
 
 <a href="https://github.com/Itxxwasi">
   <img src="https://github.com/Itxxwasi.png" width="80" height="80" style="border-radius:50%"/>
 </a>
 
-**[Itxxwasi](https://github.com/Itxxwasi)** — Wasi Tech
+**[Itxxwasi](https://github.com/Itxxwasi)** — ᴡᴀsɪ ᴛᴇᴄʜ
 
 </div>
 
 ---
 
-## `▸` LEGAL
+## `▸` 𝐋𝐄𝐆𝐀𝐋
 
 <div align="center">
 
 ```
-⚠️  DISCLAIMER
+⚠️  ᴅɪsᴄʟᴀɪᴍᴇʀ
 ──────────────────────────────────────────────────────────
-This bot is NOT affiliated with WhatsApp Inc.
-Use at your own risk. Misuse may result in account bans.
-The developer is not responsible for any bans or misuse.
+ᴛʜɪs ʙᴏᴛ ɪs ɴᴏᴛ ᴀғғɪʟɪᴀᴛᴇᴅ ᴡɪᴛʜ ᴡʜᴀᴛsᴀᴘᴘ ɪɴᴄ.
+ᴜsᴇ ᴀᴛ ʏᴏᴜʀ ᴏᴡɴ ʀɪsᴋ. ᴍɪsᴜsᴇ may ʀᴇsᴜʟᴛ in ᴀᴄᴄᴏᴜɴᴛ ʙᴀɴs.
+ᴛʜᴇ ᴅᴇᴠᴇʟᴏᴘᴇʀ ɪs ɴᴏᴛ ʀᴇsᴘᴏɴsɪʙʟᴇ ғᴏʀ any ʙᴀɴs or ᴍɪsᴜsᴇ.
 ──────────────────────────────────────────────────────────
 
 ℹ️  NOTICE
 ──────────────────────────────────────────────────────────
-NOT FOR SALE. Do not edit obfuscated plugins.
-Give credit when reusing files or plugins.
+ɴᴏᴛ ғᴏʀ sᴀʟᴇ. ᴅᴏ ɴᴏᴛ edit ᴏʙғᴜsᴄᴀᴛᴇᴅ ᴘʟᴜɢɪɴs.
+ɢɪᴠᴇ ᴄʀᴇᴅɪᴛ when ʀᴇᴜsɪɴɢ ғɪʟᴇs ᴏʀ ᴘʟᴜɢɪɴs.
 ──────────────────────────────────────────────────────────
 
-🚫  DO NOT COPY WITHOUT PERMISSION
+🚫  ᴅᴏ ɴᴏᴛ ᴄᴏᴘʏ ᴡɪᴛʜᴏᴜᴛ ᴘᴇʀᴍɪssɪᴏɴ
 ──────────────────────────────────────────────────────────
-© 2025 DybyTechInc — All rights reserved.
+© 2025 ᴅʏʙʏᴛᴇᴄʜɪɴᴄ — ᴀʟʟ ʀɪɢʜᴛs ʀᴇsᴇʀᴠᴇᴅ.
 ──────────────────────────────────────────────────────────
 ```
 
@@ -213,5 +213,5 @@ Give credit when reusing files or plugins.
 ---
 
 <div align="center">
-<sub>Made with ⚡ by <a href="https://github.com/DybyTechX">DybyTech</a> • MEGALODON-MD 2025</sub>
+<sub>Made with ⚡ by <a href="https://github.com/DybyTechX">ᴅʏʙʏ ᴛᴇᴄʜ</a> • ᴍᴇɢᴀʟᴏᴅᴏɴ-ᴍᴅ 2026</sub>
 </div>

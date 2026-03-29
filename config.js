@@ -8,22 +8,18 @@ function convertToBool(text, fault = 'true') {
 }
 
 module.exports = {
-SESSION_ID: process.env.SESSION_ID || "DEV~DYBY~O7hXmJLJ#liT241suXauptcQCXhmLDgk-kjOz7OKVLYKFyK8jGKE",
+SESSION_ID: process.env.SESSION_ID || "DEV~DYBY~Dn5mQC5b#Mt_he6v8TEXfUp2i_yYNe0gSzXqutxSPqzQUNOpioGo",
 // add your Session Id 
 AUTO_STATUS_SEEN: process.env.AUTO_STATUS_SEEN || "true",
 // make true or false status auto seen
 AUTO_STATUS_REPLY: process.env.AUTO_STATUS_REPLY || "false",
 // make true if you want auto reply on status 
-AUTO_STICKER: process.env.AUTO_STICKER || "false",
- //make true if you want auto sticker   
 AUTO_STATUS_REACT: process.env.AUTO_STATUS_REACT || "true",
 // make true if you want auto reply on status 
 AUTO_STATUS_MSG: process.env.AUTO_STATUS_MSG || "*SEEN YOUR STATUS BY MEGALODON-MD 🤍*",
 // set the auto reply massage on status reply  
 WELCOME: process.env.WELCOME || "true",
 // true if want welcome and goodbye msg in groups    
-ADMIN_EVENTS: process.env.ADMIN_EVENTS || "false",
-// make true to know who dismiss or promoted a member in group
 ANTI_LINK: process.env.ANTI_LINK || "false",
 // make anti link true,false for groups 
 ANTI_DELETE: process.env.ANTI_DELETE || "false",
@@ -34,7 +30,7 @@ MENTION_REPLY: process.env.MENTION_REPLY || "false",
 // make true if want auto voice reply if someone menetion you 
 MENU_IMAGE_URL: process.env.MENU_IMAGE_URL || "https://files.catbox.moe/nzc6xk.jpg",
 // add custom menu and mention reply image url
-PREFIX: process.env.PREFIX || "*",
+PREFIX: process.env.PREFIX || ".",
 // add your prifix for bot   
 BOT_NAME: process.env.BOT_NAME || "𝐌𝐄𝐆𝐀𝐋𝐎𝐃𝐎𝐍-𝐌𝐃",
 // add bot name here for menu
@@ -50,12 +46,8 @@ OWNER_NUMBER: process.env.OWNER_NUMBER || "50948702213",
 // add your bot owner number
 OWNER_NAME: process.env.OWNER_NAME || "ᴅʏʙʏ ᴛᴇᴄʜ",
 // add bot owner name
-DESCRIPTION: process.env.DESCRIPTION || "*© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍᴇɢᴀʟᴏᴅᴏɴ ᴍᴅ*",
-// bot description    
 ALIVE_IMG: process.env.ALIVE_IMG || "https://files.catbox.moe/frns4k.jpg",
 // image for alive msg
-LIVE_MSG: process.env.LIVE_MSG || "> *MEGALODON-MD*⚡",
-// alive msg content
 READ_MESSAGE: process.env.READ_MESSAGE || "false",
 // Turn true or false for automatic read msgs
 AUTO_REACT: process.env.AUTO_REACT || "false",
@@ -68,10 +60,6 @@ ANTI_LINK_KICK: process.env.ANTI_LINK_KICK || "false",
 // kick user if share link 
 AUTO_VOICE: process.env.AUTO_VOICE || "false",
 // auto voice messages
-AUTO_STICKER: process.env.AUTO_STICKER || "false",
-// auto stickers 
-AUTO_REPLY: process.env.AUTO_REPLY || "false",
-// automatic text reply 
 ALWAYS_ONLINE: process.env.ALWAYS_ONLINE || "false",
 // always online 
 PUBLIC_MODE: process.env.PUBLIC_MODE || "true",

@@ -6,7 +6,7 @@
   "success_url": "/",
 
     "stack": "container",
-  "env": {
+    "env": {
     "SESSION_ID": {
       "description": "Put the session-id here.",
       "required": true,
@@ -43,18 +43,6 @@
       "required": false,
       "value": "false"  
     },    
-   
-    "AUTO_REPLY": {
-      "description": "Make it true if you want automatic reply.",
-      "required": false,
-      "value": "false"
-    }, 
-
-    "AUTO_STICKER": {
-      "description": "Make it true if you want automatic sticker.",
-      "required": false,
-      "value": "false"
-    }, 
 
 
     "AUTO_STATUS_SEEN": {
@@ -133,12 +121,6 @@
       "required": false,
       "value": "https://files.catbox.moe/frns4k.jpg"
     },
-    
-     "DESCRIPTION": {
-      "description": "add caption for menu and other",
-      "required": false,
-      "value": "*© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅʏʙʏ ᴛᴇᴄʜ*"
-    },
 
       "DELETE_LINKS": {
       "description": "remove links from group automatically without removing member",
@@ -182,12 +164,6 @@
       "required": false,
       "value": "inbox"
     }, 
-
-    "ADMIN_EVENTS": {
-      "description": "make it true if want know who promote or demote a member .",
-      "required": false,
-      "value": "false"
-    },
 
     "WELCOME": {
       "description": "make it true if want goodbye and welcome message in groups.",

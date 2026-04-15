@@ -35,16 +35,16 @@ cmd({
     const buttons = [
       {
         buttonId: `${prefix}menu`,
-        buttonText: { displayText: "📂 ᴍᴇɴᴜ" },
+        buttonText: { displayText: " ᴍᴇɴᴜ" },
         type: 1
       },
       {
         buttonId: `${prefix}owner`,
-        buttonText: { displayText: "👑 ᴏᴡɴᴇʀ" },
+        buttonText: { displayText: "ᴏᴡɴᴇʀ" },
         type: 1
       },
       {
-        buttonId: `.getbot`,
+        buttonId: `${prefix}repo`,
         buttonText: { displayText: "𝐕𝐈𝐄𝐖 𝐒𝐂𝐑𝐈𝐏𝐓" },
         type: 1
       }
@@ -64,7 +64,7 @@ cmd({
               {
                 title: "ᴘʟᴇᴀsᴇ ᴄʜᴏsᴇ ᴏɴᴇ",
                 rows: [
-                  { title: "𝐀𝐋𝐋 𝐌𝐄𝐍𝐔", description: "𝐋𝐈𝐒𝐓 𝐌𝐄𝐍𝐔", id: ".allmenu" },
+                  { title: "𝐀𝐋𝐋 𝐌𝐄𝐍𝐔", description: "𝐋𝐈𝐒𝐓 𝐌𝐄𝐍𝐔", id: ".menu" },
                   { title: "𝐁𝐔𝐆 𝐌𝐄𝐍𝐔", description: "𝐁𝐔𝐆 𝐌𝐄𝐍𝐔", id: ".bugmenu" }
                 ]
               }
